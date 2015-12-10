@@ -44,6 +44,11 @@ to go
     output-print (word "* Hormigas vivas: " alive)
     output-print (word "* Hormigas muertas: " deads)
     output-print "----------------------------"
+    set-current-plot "Comportamiento de las generaciones"
+    set-current-plot-pen "Vivas"
+    plot alive
+    set-current-plot-pen "Muertas"
+    plot deads
     stop
     ]
 
@@ -415,8 +420,14 @@ to check-ticks ; Revisa si ya se cumplieron los 1000 ticks que vive cada generac
   
   ifelse ticks >= 1500
   [; Lo hace el if (fin de una generacion)
+    set-current-plot "Comportamiento de la generación actual" 
     clear-plot
     set num_generation num_generation + 1
+    ; Vuelve las hormigas a la posicion de salida y las "revive"
+    ask turtles with [shape = "bug" and (color = red or color = black)][
+      set color black
+      setxy 20 -15
+      ]
     reset-ticks
   ]
   [; Lo hace en el else
@@ -647,7 +658,7 @@ PLOT
 98
 1183
 319
-Comportamiento de la generación
+Comportamiento de la generación actual
 Tiempo (ticks)
 Hormigas
 0.0
@@ -658,8 +669,8 @@ true
 false
 "" ""
 PENS
-"Hormigas vivas" 1.0 0 -13840069 true "" "plot count turtles with [shape = \"bug\" and color = black]"
-"Hormigas muertas" 1.0 0 -2674135 true "" "plot count turtles with [shape = \"bug\" and color = red]"
+"Hormigas vivas" 1.0 2 -13840069 true "" "plot count turtles with [shape = \"bug\" and color = black]"
+"Hormigas muertas" 1.0 2 -2674135 true "" "plot count turtles with [shape = \"bug\" and color = red]"
 
 TEXTBOX
 1198
@@ -684,9 +695,28 @@ Hormigas vivas
 OUTPUT
 797
 328
-1183
+1045
 547
 12
+
+PLOT
+1067
+328
+1357
+544
+Comportamiento de las generaciones
+Generación
+Hormigas
+0.0
+10.0
+0.0
+300.0
+true
+false
+"" ""
+PENS
+"Muertas" 1.0 0 -2674135 true "" ""
+"Vivas" 1.0 0 -13840069 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
