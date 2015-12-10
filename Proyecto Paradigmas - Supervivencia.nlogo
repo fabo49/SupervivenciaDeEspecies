@@ -23,6 +23,7 @@ to setup
   clear-all
   setup-patches
   setup-individuals
+  set num_generation 1
   reset-ticks
 
 end
@@ -34,7 +35,17 @@ to go
  individual-poisoned
  ; reproduce-turtles
 
-  tick
+  check-ticks
+  if (ticks >= 1500)[
+     ; Se recolectan las estadisticas de esa generacion
+    let alive  count turtles with [shape = "bug" and color = black]
+    let deads count turtles with [shape = "bug" and color = red]
+    output-print (word "-- Fin de la generacion " num_generation " --")
+    output-print (word "* Hormigas vivas: " alive)
+    output-print (word "* Hormigas muertas: " deads)
+    output-print "----------------------------"
+    stop
+    ]
 
 end
 
@@ -43,9 +54,9 @@ end
 
 ;         Variables de las tortugas
 
-; Los individuos poseen una vida y la cantidad de alimento consumido
-turtles-own [ life food badpoints number_ticks_alive]                                     
-
+; Los individuos poseen una vida, la cantidad de alimento consumido, coordenadas donde hay veneno y la cantidad de ticks que llevan vivos.
+turtles-own [ life food badpoints number_ticks_alive]                                
+globals[num_generation]
 
 
 ; ------------------------------------------------------------------------------
@@ -396,7 +407,22 @@ to individual-poisoned                   ; El individuo se posa sobre un patch o
 
 end
 
+; ----------------------------------------------------------------------------------
 
+;                          Funciones de cambios generacionales
+
+to check-ticks ; Revisa si ya se cumplieron los 1000 ticks que vive cada generacion
+  
+  ifelse ticks >= 1500
+  [; Lo hace el if (fin de una generacion)
+    clear-plot
+    set num_generation num_generation + 1
+    reset-ticks
+  ]
+  [; Lo hace en el else
+    tick
+    ]
+end
 
 ; ----------------------------------------------------------------------------------
 
@@ -532,7 +558,6 @@ end
 
 
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 115
@@ -622,7 +647,7 @@ PLOT
 98
 1183
 319
-Comportamiento de la población
+Comportamiento de la generación
 Tiempo (ticks)
 Hormigas
 0.0
@@ -655,6 +680,13 @@ Hormigas vivas
 14
 65.0
 1
+
+OUTPUT
+797
+328
+1183
+547
+12
 
 @#$#@#$#@
 ## WHAT IS IT?
