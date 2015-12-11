@@ -37,7 +37,13 @@ to go
 
   check-ticks
   if (ticks >= 1500)[
-     ; Se recolectan las estadisticas de esa generacion
+    set-info
+    stop
+    ]
+
+end
+
+to set-info ; Se recolectan las estadisticas de esa generacion
     let alive  count turtles with [shape = "bug" and color = black]
     let deads count turtles with [shape = "bug" and color = red]
     output-print (word "-- Fin de la generacion " num_generation " --")
@@ -46,15 +52,10 @@ to go
     output-print "----------------------------"
     set-current-plot "Comportamiento de las generaciones"
     set-current-plot-pen "Vivas"
-    plot alive
+    plotxy num_generation alive
     set-current-plot-pen "Muertas"
-    plot deads
-    stop
-    ]
-
+    plotxy num_generation deads
 end
-
-
 ; ------------------------------------------------------------------------------
 
 ;         Variables de las tortugas
@@ -416,10 +417,11 @@ end
 
 ;                          Funciones de cambios generacionales
 
-to check-ticks ; Revisa si ya se cumplieron los 1000 ticks que vive cada generacion
+to check-ticks ; Se encarga de actualizar las posiciones de las hormigas y de "revivirlas"
   
   ifelse ticks >= 1500
   [; Lo hace el if (fin de una generacion)
+    clear-deadones
     set-current-plot "Comportamiento de la generación actual" 
     clear-plot
     set num_generation num_generation + 1
@@ -433,6 +435,12 @@ to check-ticks ; Revisa si ya se cumplieron los 1000 ticks que vive cada generac
   [; Lo hace en el else
     tick
     ]
+end
+
+to clear-deadones ; Le vacia la memoria a las hormigas muertas
+ ask turtles with [shape = "bug" and color = red][
+     set badpoints []
+ ]
 end
 
 ; ----------------------------------------------------------------------------------
@@ -633,9 +641,9 @@ NIL
 
 MONITOR
 1063
-36
+58
 1168
-81
+103
 Hormigas vivas
 count turtles with [shape = \"bug\" and color = black]
 17
@@ -644,9 +652,9 @@ count turtles with [shape = \"bug\" and color = black]
 
 MONITOR
 799
-38
+60
 912
-83
+105
 Hormigas muertas
 count turtles with [color = red and shape = \"bug\"]
 17
@@ -655,9 +663,9 @@ count turtles with [color = red and shape = \"bug\"]
 
 PLOT
 797
-98
-1183
-319
+120
+1167
+278
 Comportamiento de la generación actual
 Tiempo (ticks)
 Hormigas
@@ -673,20 +681,20 @@ PENS
 "Hormigas muertas" 1.0 2 -2674135 true "" "plot count turtles with [shape = \"bug\" and color = red]"
 
 TEXTBOX
-1198
-124
-1302
-158
+1191
+211
+1326
+245
 Hormigas muertas
 14
 15.0
 1
 
 TEXTBOX
-1200
-178
-1288
-212
+1189
+167
+1305
+189
 Hormigas vivas
 14
 65.0
@@ -700,14 +708,14 @@ OUTPUT
 12
 
 PLOT
-1067
-328
-1357
-544
+1056
+330
+1369
+546
 Comportamiento de las generaciones
 Generación
 Hormigas
-0.0
+1.0
 10.0
 0.0
 300.0
@@ -717,6 +725,26 @@ false
 PENS
 "Muertas" 1.0 0 -2674135 true "" ""
 "Vivas" 1.0 0 -13840069 true "" ""
+
+TEXTBOX
+800
+26
+950
+44
+Generación actual
+14
+0.0
+1
+
+TEXTBOX
+800
+296
+1067
+314
+Historial de las generaciones pasadas
+14
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
