@@ -528,9 +528,6 @@ to change-generation ; Se encarga de hacer el cambio de generacion, revive las h
     set num_generation num_generation + 1
     ; Vuelve las hormigas a la posicion de salida y las "revive"
     ask turtles with [shape = "bug" and (color = red or color = black)][
-      ask turtles with [shape = "bug" and color = red][
-        set badpoints []
-        ]
       ask turtles with [shape = "bug" and color = black][
         set priority priority + 1 ; Como sobrevivio, entonces incrementamos su prioridad en 1
         ]
