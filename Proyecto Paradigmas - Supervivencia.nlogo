@@ -25,6 +25,7 @@ to setup
   setup-individuals
   set num_generation 1
   reset-ticks
+  set global-badpoints (list)                                 ; Pizarra de agentes para la comunicacion y transmicion de informacion sobre los lugares peligrosos
 
 end
 
@@ -62,8 +63,8 @@ end
 ;         Variables de las tortugas
 
 ; Los individuos poseen una vida, la cantidad de alimento consumido, coordenadas donde hay veneno y la cantidad de ticks que llevan vivos.
-turtles-own [life food badpoints number_ticks_alive priority]                                
-globals[num_generation]
+turtles-own [life food number_ticks_alive priority]                                
+globals[num_generation global-badpoints]
 
 
 ; ------------------------------------------------------------------------------
@@ -87,8 +88,6 @@ to setup-individuals                                           ; Se crean los in
      set food 0
      
      set priority 0
-     
-     set badpoints []                                                             ; Conocimiento del agente de las posiciones donde hay veneno 
      
      set number_ticks_alive 0                                                     ; Esto hay que ponerlo en 0 otra vez en cada generacion
 
@@ -321,7 +320,7 @@ end
 to move-turtles
   ask turtles with [ shape != "plant" and shape != "leaf" and shape != "tree" and shape != "flower" and color != red and color != 47 ] [                 ; Los individuos muertos o la reina no se mueven
 
-    face-non-green-patch
+    constructive-path-algorithm
 
 
     if food > 0[                                  ; El movimiento del individuo consume alimento
@@ -333,11 +332,103 @@ to move-turtles
   ]
 end
 
-to face-non-green-patch                           ; Se evita el cesped por parte de los individuos
+to constructive-path-algorithm                           
 
- left random 360
- right random 360
- forward 1
+  ;                        Etapas de movimiento del individuo:
+  
+  ; 1- Se propone una futura posicion
+  ; 2- Se verifica si dicha posicion es peligrosa o no
+  ; 2.1 - Si es peligrosa, se propone una nueva
+  ; 2.2 - Si es desconocida, se mueve a ese punto
+  ; 3- Se verifica si la nueva posicion es peligrosa o no
+  ; 3.1- Si es peligrosa, se agrega a la lista y se devuelve a su posicion anterior, vuelve a proponer una nueva posicion
+  ; 3.2- Si no es peligrosa, se queda alli
+
+ let continue true
+ let future-left 0
+ let future-right 0
+ let sub-list [ ]                                 ; Posicion a la que se movera el individuo  
+ 
+ while [ continue ]
+ 
+ [
+ 
+  ;-------------- 1. Se propone una futura posicion --------------------
+ 
+    set future-left random 360
+    set future-right random 360 
+ 
+    set sub-list[]
+    set sub-list list (future-left) (future-right) 
+ 
+  ;-------------- 2. Se verifica si la futura posicion es peligrosa o no --------------------
+ 
+    ifelse member? sub-list global-badpoints[
+      
+  ;-------------- 2.1. Futura posicion peligrosa --------------------
+      
+      ; Dummy
+    ]
+    
+    [
+      
+  ;-------------- 2.2. Futura posicion desconocida --------------------
+        
+       left future-left
+       right future-right
+       forward 1
+       set continue false
+       
+  ;-------------- 3. Se verifica la nueva posicion --------------------    
+  
+     ifelse pcolor = 17 [
+        
+        ; El individuo esta en veneno, se queda quieto
+        set continue false
+     ]
+     
+     [
+       
+       let danger false
+       
+       ask other turtles in-radius 1 [                          ; Se verifica el radio del individuo 
+         
+         if color = red[                                        ; Hay un individuo envenenado
+           
+           set danger true
+           
+           ]
+         
+        ]
+      
+  ;-------------- 3.1 La nueva posicion es peligrosa --------------------          
+      
+      ifelse danger[
+        
+        set sub-list []
+        set sub-list list (future-left) (future-right) 
+        set global-badpoints fput sub-list global-badpoints                   ; Se agrega a las posiciones peligrosas
+        forward -1
+        set continue true                                                     ; Vuelve a escoger nueva futura posicion        
+      ]
+      [
+        
+  ;-------------- 3.2 La nueva posicion es segura --------------------              
+        
+        set continue false
+       ] 
+       
+       
+     ]; Fin else
+     
+         
+      
+    ] ; Fin de else
+ 
+ ]; Fin de While
+ 
+ ; Se evita el cesped por parte de los individuos
+ 
  if pcolor = 34 [
    forward -1
    left 2
