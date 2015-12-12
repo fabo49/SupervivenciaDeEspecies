@@ -37,7 +37,7 @@ to go
  ; reproduce-turtles
 
   check-ticks
-  if (ticks >= 1500)[
+  if (ticks >= ttl_generation)[
     set-info
     stop
     ]
@@ -63,7 +63,7 @@ end
 ;         Variables de las tortugas
 
 ; Los individuos poseen una vida, la cantidad de alimento consumido, coordenadas donde hay veneno y la cantidad de ticks que llevan vivos.
-turtles-own [life food number_ticks_alive priority]                                
+turtles-own [life food number_ticks_alive]                                
 globals[num_generation global-badpoints]
 
 
@@ -86,8 +86,6 @@ to setup-individuals                                           ; Se crean los in
      set life life + 50
 
      set food 0
-     
-     set priority 0
      
      set number_ticks_alive 0                                                     ; Esto hay que ponerlo en 0 otra vez en cada generacion
 
@@ -513,7 +511,7 @@ end
 
 to check-ticks ; Se encarga de actualizar las posiciones de las hormigas y de "revivirlas"
   
-  ifelse ticks >= 1500
+  ifelse ticks >= ttl_generation
   [; Lo hace el if (fin de una generacion)
     change-generation
   ]
@@ -528,11 +526,7 @@ to change-generation ; Se encarga de hacer el cambio de generacion, revive las h
     set num_generation num_generation + 1
     ; Vuelve las hormigas a la posicion de salida y las "revive"
     ask turtles with [shape = "bug" and (color = red or color = black)][
-      ask turtles with [shape = "bug" and color = black][
-        set priority priority + 1 ; Como sobrevivio, entonces incrementamos su prioridad en 1
-        ]
       set color black
-      ; ***** OJO ***** Antes de setear esto en 0, hay que elegir los que tienen mas "number_ticks_alive" para clonarlos para la siguiente generación
       set number_ticks_alive 0
       setxy 20 -15
       ]
@@ -670,13 +664,12 @@ to create-poison-space                         ; Se crea veneno en el ambiente
   ]
 
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
-115
-14
-774
-549
+33
+87
+692
+622
 22
 17
 14.422222222222222
@@ -700,11 +693,11 @@ ticks
 30.0
 
 BUTTON
-32
-100
-95
-133
-NIL
+532
+41
+689
+74
+Correr la simulación
 GO
 T
 1
@@ -717,11 +710,11 @@ NIL
 0
 
 BUTTON
-31
-179
-98
-212
-NIL
+418
+41
+503
+74
+Preparar
 SETUP
 NIL
 1
@@ -734,10 +727,10 @@ NIL
 1
 
 MONITOR
-1063
-58
-1168
-103
+997
+72
+1102
+117
 Hormigas vivas
 count turtles with [shape = \"bug\" and color = black]
 17
@@ -745,10 +738,10 @@ count turtles with [shape = \"bug\" and color = black]
 11
 
 MONITOR
-799
-60
-912
-105
+733
+74
+846
+119
 Hormigas muertas
 count turtles with [color = red and shape = \"bug\"]
 17
@@ -756,15 +749,15 @@ count turtles with [color = red and shape = \"bug\"]
 11
 
 PLOT
-797
-120
-1167
-278
+731
+134
+1101
+318
 Comportamiento de la generación actual
 Tiempo (ticks)
 Hormigas
 0.0
-1500.0
+2000.0
 0.0
 300.0
 true
@@ -775,37 +768,37 @@ PENS
 "Hormigas muertas" 1.0 2 -2674135 true "" "plot count turtles with [shape = \"bug\" and color = red]"
 
 TEXTBOX
-1191
-211
-1326
-245
+1125
+225
+1260
+259
 Hormigas muertas
 14
 15.0
 1
 
 TEXTBOX
-1189
-167
-1305
-189
+1123
+181
+1239
+203
 Hormigas vivas
 14
 65.0
 1
 
 OUTPUT
-797
-328
-1045
-547
+730
+360
+978
+619
 12
 
 PLOT
-1056
-330
-1369
-546
+989
+362
+1302
+618
 Comportamiento de las generaciones
 Generación
 Hormigas
@@ -821,21 +814,46 @@ PENS
 "Vivas" 1.0 0 -13840069 true "" ""
 
 TEXTBOX
-800
-26
-950
-44
+734
+40
+884
+58
 Generación actual
 14
 0.0
 1
 
 TEXTBOX
-800
-296
-1067
-314
+733
+328
+1000
+346
 Historial de las generaciones pasadas
+14
+0.0
+1
+
+SLIDER
+35
+41
+215
+74
+ttl_generation
+ttl_generation
+1000
+5000
+1800
+1
+1
+ticks
+HORIZONTAL
+
+TEXTBOX
+36
+15
+268
+33
+Tiempo de vida de la generación
 14
 0.0
 1
