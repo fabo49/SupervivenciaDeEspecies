@@ -318,7 +318,12 @@ end
 to move-turtles
   ask turtles with [ shape != "plant" and shape != "leaf" and shape != "tree" and shape != "flower" and color != red and color != 47 ] [                 ; Los individuos muertos o la reina no se mueven
 
-    constructive-path-algorithm
+    ifelse genetic_algorithm[
+      constructive-path-algorithm
+    ]
+    [
+      face-non-green-patch
+    ]
 
 
     if food > 0[                                  ; El movimiento del individuo consume alimento
@@ -328,6 +333,18 @@ to move-turtles
      ]
 
   ]
+end
+
+to face-non-green-patch                           ; Se evita el cesped por parte de los individuos, esto es cunado no se hace el algoritmo genetico
+
+ left random 360
+ right random 360
+ forward 1
+ if pcolor = 34 [
+   forward -1
+   left 2
+ ]
+
 end
 
 to constructive-path-algorithm                           
@@ -693,10 +710,10 @@ ticks
 30.0
 
 BUTTON
-532
-41
-689
-74
+920
+38
+1077
+71
 Correr la simulación
 GO
 T
@@ -710,10 +727,10 @@ NIL
 0
 
 BUTTON
-418
-41
-503
-74
+833
+38
+918
+71
 Preparar
 SETUP
 NIL
@@ -727,10 +744,10 @@ NIL
 1
 
 MONITOR
-997
-72
-1102
-117
+1005
+123
+1110
+168
 Hormigas vivas
 count turtles with [shape = \"bug\" and color = black]
 17
@@ -738,10 +755,10 @@ count turtles with [shape = \"bug\" and color = black]
 11
 
 MONITOR
-733
-74
-846
-119
+741
+125
+854
+170
 Hormigas muertas
 count turtles with [color = red and shape = \"bug\"]
 17
@@ -749,10 +766,10 @@ count turtles with [color = red and shape = \"bug\"]
 11
 
 PLOT
-731
-134
-1101
-318
+739
+185
+1109
+340
 Comportamiento de la generación actual
 Tiempo (ticks)
 Hormigas
@@ -768,36 +785,36 @@ PENS
 "Hormigas muertas" 1.0 2 -2674135 true "" "plot count turtles with [shape = \"bug\" and color = red]"
 
 TEXTBOX
-1125
-225
-1260
-259
+1133
+276
+1268
+310
 Hormigas muertas
 14
 15.0
 1
 
 TEXTBOX
-1123
-181
-1239
-203
+1131
+232
+1247
+254
 Hormigas vivas
 14
 65.0
 1
 
 OUTPUT
-730
-360
-978
+736
+387
+984
 619
 12
 
 PLOT
-989
-362
-1302
+995
+389
+1308
 618
 Comportamiento de las generaciones
 Generación
@@ -814,20 +831,20 @@ PENS
 "Vivas" 1.0 0 -13840069 true "" ""
 
 TEXTBOX
-734
-40
-884
-58
+742
+91
+892
+109
 Generación actual
 14
 0.0
 1
 
 TEXTBOX
-733
-328
-1000
-346
+739
+355
+1006
+373
 Historial de las generaciones pasadas
 14
 0.0
@@ -854,6 +871,27 @@ TEXTBOX
 268
 33
 Tiempo de vida de la generación
+14
+0.0
+1
+
+SWITCH
+364
+41
+533
+74
+genetic_algorithm
+genetic_algorithm
+0
+1
+-1000
+
+TEXTBOX
+368
+14
+518
+32
+Algoritmo genético
 14
 0.0
 1
