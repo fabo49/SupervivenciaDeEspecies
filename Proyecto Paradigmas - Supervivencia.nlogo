@@ -56,12 +56,13 @@ to set-info ; Se recolectan las estadisticas de esa generacion
     set-current-plot-pen "Muertas"
     plotxy num_generation deads
 end
+
 ; ------------------------------------------------------------------------------
 
 ;         Variables de las tortugas
 
 ; Los individuos poseen una vida, la cantidad de alimento consumido, coordenadas donde hay veneno y la cantidad de ticks que llevan vivos.
-turtles-own [ life food badpoints number_ticks_alive]                                
+turtles-own [life food badpoints number_ticks_alive priority]                                
 globals[num_generation]
 
 
@@ -72,7 +73,7 @@ globals[num_generation]
 
 to setup-individuals                                           ; Se crean los individuos del ambiente LA PRIMERA VEZ
 
-  create-turtles  300                                           ; Número de individuos iniciales
+  create-turtles  300                                           ; Número de individuos, siempre van a ser 300
 
   ask turtles with [ shape != "plant" and shape != "leaf" and shape != "tree" and shape != "flower" ]
   [
@@ -84,6 +85,8 @@ to setup-individuals                                           ; Se crean los in
      set life life + 50
 
      set food 0
+     
+     set priority 0
      
      set badpoints []                                                             ; Conocimiento del agente de las posiciones donde hay veneno 
      
@@ -421,26 +424,31 @@ to check-ticks ; Se encarga de actualizar las posiciones de las hormigas y de "r
   
   ifelse ticks >= 1500
   [; Lo hace el if (fin de una generacion)
-    clear-deadones
-    set-current-plot "Comportamiento de la generación actual" 
-    clear-plot
-    set num_generation num_generation + 1
-    ; Vuelve las hormigas a la posicion de salida y las "revive"
-    ask turtles with [shape = "bug" and (color = red or color = black)][
-      set color black
-      setxy 20 -15
-      ]
-    reset-ticks
+    change-generation
   ]
   [; Lo hace en el else
     tick
     ]
 end
 
-to clear-deadones ; Le vacia la memoria a las hormigas muertas
- ask turtles with [shape = "bug" and color = red][
-     set badpoints []
- ]
+to change-generation ; Se encarga de hacer el cambio de generacion, revive las hormigas muertas (tambien les vacia su memoria) y a las que sobrevivieron les incrementa la prioridad
+    set-current-plot "Comportamiento de la generación actual" 
+    clear-plot
+    set num_generation num_generation + 1
+    ; Vuelve las hormigas a la posicion de salida y las "revive"
+    ask turtles with [shape = "bug" and (color = red or color = black)][
+      ask turtles with [shape = "bug" and color = red][
+        set badpoints []
+        ]
+      ask turtles with [shape = "bug" and color = black][
+        set priority priority + 1 ; Como sobrevivio, entonces incrementamos su prioridad en 1
+        ]
+      set color black
+      ; ***** OJO ***** Antes de setear esto en 0, hay que elegir los que tienen mas "number_ticks_alive" para clonarlos para la siguiente generación
+      set number_ticks_alive 0
+      setxy 20 -15
+      ]
+    reset-ticks
 end
 
 ; ----------------------------------------------------------------------------------
@@ -574,8 +582,6 @@ to create-poison-space                         ; Se crea veneno en el ambiente
   ]
 
 end
-
-
 
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -715,7 +721,7 @@ PLOT
 Comportamiento de las generaciones
 Generación
 Hormigas
-1.0
+0.0
 10.0
 0.0
 300.0
