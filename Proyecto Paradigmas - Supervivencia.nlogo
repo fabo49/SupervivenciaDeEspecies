@@ -48,6 +48,11 @@ to set-info ; Se recolectan las estadisticas de esa generacion
     let alive  count turtles with [shape = "bug" and color = black]
     let deads count turtles with [shape = "bug" and color = red]
     output-print (word "-- Fin de la generacion " num_generation " --")
+     ifelse genetic_algorithm[
+       output-print "* Algoritmo genético: activo"
+      ][
+       output-print "* Algoritmo genético: inactivo"
+      ]
     output-print (word "* Hormigas vivas: " alive)
     output-print (word "* Hormigas muertas: " deads)
     output-print "----------------------------"
@@ -319,10 +324,10 @@ to move-turtles
   ask turtles with [ shape != "plant" and shape != "leaf" and shape != "tree" and shape != "flower" and color != red and color != 47 ] [                 ; Los individuos muertos o la reina no se mueven
 
     ifelse genetic_algorithm[
-      constructive-path-algorithm
+      constructive-path-algorithm ; Cuando el usuario escogio correr la simulacion con el algoritmo genetico
     ]
     [
-      face-non-green-patch
+      face-non-green-patch        ; Cuando el usuario quiere correr la simulacion sin el algoritmo genetico
     ]
 
 
@@ -710,10 +715,10 @@ ticks
 30.0
 
 BUTTON
-920
-38
-1077
-71
+853
+41
+1010
+74
 Correr la simulación
 GO
 T
@@ -727,10 +732,10 @@ NIL
 0
 
 BUTTON
-833
-38
-918
-71
+742
+42
+827
+75
 Preparar
 SETUP
 NIL
@@ -858,8 +863,8 @@ SLIDER
 ttl_generation
 ttl_generation
 1000
-5000
-1800
+2000
+1503
 1
 1
 ticks
