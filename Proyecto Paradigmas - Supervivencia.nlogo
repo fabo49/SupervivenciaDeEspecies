@@ -870,7 +870,7 @@ TEXTBOX
 15
 268
 33
-Tiempo de vida de la generación
+Tiempo de la simulación
 14
 0.0
 1
