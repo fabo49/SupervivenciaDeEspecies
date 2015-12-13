@@ -35,3 +35,8 @@ Sería interesante observar el comportamiento de los agentes haciendo el cambio 
 ###### Optimización del tiempo de la simulación
 
 Se propone a los interesados que se determine alguna manera en que se logre mejorar el tiempo de respuesta de la simulación. Se piensa que el aumento en el tiempo se debe a la gran cantidad de agentes que están tratando de leer y escribir en el recurso compartido (el vector de coordenadas). Lo anterior ocaciona que NetLogo tenga que hacer una sincronización entre todos los agentes y esto se cree que es lo que repercute en el tiempo de la simulación.
+
+## Desarrolladores
+
+* José Pablo Ureña [GitHub](https://github.com/SlyJose)
+* Fabián Rodríguez [GitHub](https://github.com/fabo49)
